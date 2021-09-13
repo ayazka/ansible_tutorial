@@ -5,6 +5,7 @@
   pre_tasks:
   
   - name: install updates on all systems
+    tags: always
     apt:
       upgrade: dist
       update_cache: yes
@@ -15,18 +16,29 @@
   tasks:
           
   - name: install apache2 and php package in Ubuntu
+    tags: apache,php,ubuntu
     apt:
       name: 
         - apache2
         - libapache2-mod-php
       state: latest
     when: ansible_distribution == "Ubuntu"
+  - name: copy default html file for site
+    tags: apache,apache2,httpd
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
 
 - hosts: db_servers
   become: true
   tasks:
 
   - name: install mariadb in Ubuntu
+    tags: mariadb,ubuntu
     apt:
       name: mariadb-server
       state: latest
@@ -37,6 +49,7 @@
   tasks:
 
   - name: install samba server
+    tags: samba,ubuntu
     package:
       name: samba
       state: latest
